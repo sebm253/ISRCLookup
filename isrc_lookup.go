@@ -160,8 +160,8 @@ func lookupISRC(trackId string) *ISRCResponse {
 		return nil
 	}
 	return &ISRCResponse{
-		ISRC:   isrc,
-		Artist: track.Artists,
-		Name:   track.Name,
+		ISRC:    isrc,
+		Artists: track.Artists,
+		Name:    track.Name,
 	}
 }
