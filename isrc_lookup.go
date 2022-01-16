@@ -80,7 +80,7 @@ func main() {
 
 	defer disgo.Close(context.TODO())
 
-	if _, err := disgo.SetGuildCommands("919338422173331576", commands); err != nil {
+	if _, err := disgo.SetGuildCommands("919338422173331576", commands); err != nil { // TODO remove this constant and make the commands global
 		log.Fatal("error while registering commands: ", err)
 	}
 
