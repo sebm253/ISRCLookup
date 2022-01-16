@@ -125,7 +125,7 @@ func onSlashCommand(event *events.ApplicationCommandInteractionEvent) {
 		} else {
 			isrcResponse := lookupISRC(match[1])
 			var artists []string
-			for _, artist := range isrcResponse.Artist {
+			for _, artist := range isrcResponse.Artists {
 				artists = append(artists, "**"+artist.Name+"**")
 			}
 			joined := strings.Join(artists, ", ")
@@ -144,9 +144,9 @@ func onSlashCommand(event *events.ApplicationCommandInteractionEvent) {
 }
 
 type ISRCResponse struct {
-	ISRC   string
-	Artist []spotify.SimpleArtist
-	Name   string
+	ISRC    string
+	Artists []spotify.SimpleArtist
+	Name    string
 }
 
 func lookupISRC(trackId string) *ISRCResponse {
