@@ -103,7 +103,14 @@ func onSlashCommand(event *events.ApplicationCommandInteractionCreate) {
 			SetEphemeral(true).
 			Build())
 	} else {
-		isrcResponse := lookupISRC(match[1])
+		isrcResponse, err := lookupISRC(match[1])
+		if err != nil {
+			_ = event.CreateMessage(messageBuilder.
+				SetContentf("there was an error while looking up the track ISRC: %s", err).
+				SetEphemeral(true).
+				Build())
+			return
+		}
 		var artists []string
 		for _, artist := range isrcResponse.Artists {
 			artists = append(artists, "**"+artist.Name+"**")
@@ -123,19 +130,19 @@ type ISRCResponse struct {
 	Name    string
 }
 
-func lookupISRC(trackId string) *ISRCResponse {
+func lookupISRC(trackId string) (*ISRCResponse, error) {
 	track, err := spotifyClient.GetTrack(context.Background(), spotify.ID(trackId))
 	if err != nil {
 		log.Errorf("there was an error while looking up track %s: ", trackId, err)
-		return nil
+		return nil, err
 	}
 	isrc, ok := track.ExternalIDs["isrc"]
 	if !ok {
-		return nil
+		return nil, err
 	}
 	return &ISRCResponse{
 		ISRC:    isrc,
 		Artists: track.Artists,
 		Name:    track.Name,
-	}
+	}, nil
 }
