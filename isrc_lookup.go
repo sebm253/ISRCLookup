@@ -18,6 +18,7 @@ import (
 	"regexp"
 	"strings"
 	"syscall"
+	"time"
 )
 
 var (
@@ -91,6 +92,10 @@ func initSpotifyClient() {
 	httpClient := spotifyauth.New().Client(ctx, spotifyToken)
 	spotifyClient = *spotify.New(httpClient)
 	log.Info("spotify client initialized.")
+	go func() { // troll face
+		time.Sleep(time.Minute * 40)
+		initSpotifyClient()
+	}()
 }
 
 func onSlashCommand(event *events.ApplicationCommandInteractionCreate) {
