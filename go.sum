@@ -129,8 +129,8 @@ github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
-github.com/zmb3/spotify/v2 v2.2.0 h1:gSZREd98Cjq5NyrK6D1Ce1cYNHKA6fi+osRnN1Qm3MM=
-github.com/zmb3/spotify/v2 v2.2.0/go.mod h1:+LVh9CafHu7SedyqYmEf12Rd01dIVlEL845yNhksW0E=
+github.com/zmb3/spotify/v2 v2.2.1 h1:5Nb8pwVDPl6CVr3jEfvYuEuWTPO69KvP2a2BzThq+WY=
+github.com/zmb3/spotify/v2 v2.2.1/go.mod h1:+LVh9CafHu7SedyqYmEf12Rd01dIVlEL845yNhksW0E=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
 go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=
