@@ -5,7 +5,7 @@ go 1.18
 // +heroku goVersion go1.18
 
 require (
-	github.com/disgoorg/disgo v0.12.6
+	github.com/disgoorg/disgo v0.13.1
 	github.com/disgoorg/log v1.2.0
 	github.com/zmb3/spotify/v2 v2.2.1
 	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5
