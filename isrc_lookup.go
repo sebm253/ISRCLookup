@@ -27,20 +27,6 @@ var (
 	youtubeSearchTemplate = "https://www.youtube.com/results?search_query=\"%s\""
 
 	spotifyClient spotify.Client
-
-	commands = []discord.ApplicationCommandCreate{
-		discord.SlashCommandCreate{
-			CommandName: "lookup",
-			Description: "Performs a lookup for the track ISRC",
-			Options: []discord.ApplicationCommandOption{
-				discord.ApplicationCommandOptionString{
-					OptionName:  "url",
-					Description: "spotify url for the track.",
-					Required:    true,
-				},
-			},
-		},
-	}
 )
 
 func main() {
@@ -64,10 +50,6 @@ func main() {
 	err = client.ConnectGateway(context.TODO())
 	if err != nil {
 		log.Fatalf("error while connecting to the gateway: %s", err)
-	}
-
-	if _, err := client.Rest().SetGlobalCommands(client.ApplicationID(), commands); err != nil {
-		log.Fatal("error while registering commands: ", err)
 	}
 
 	initSpotifyClient()
