@@ -34,7 +34,7 @@ var (
 			Description: "Performs a lookup for the track ISRC",
 			Options: []discord.ApplicationCommandOption{
 				discord.ApplicationCommandOptionString{
-					Name:        "url",
+					OptionName:  "url",
 					Description: "spotify url for the track.",
 					Required:    true,
 				},
@@ -49,7 +49,7 @@ func main() {
 	log.Info("disgo version: ", disgo.Version)
 
 	client, err := disgo.New(token,
-		bot.WithGatewayConfigOpts(gateway.WithGatewayIntents(discord.GatewayIntentsNone)),
+		bot.WithGatewayConfigOpts(gateway.WithIntents(gateway.IntentsNone)),
 		bot.WithCacheConfigOpts(cache.WithCacheFlags(cache.FlagsNone)),
 		bot.WithEventListeners(&events.ListenerAdapter{
 			OnApplicationCommandInteraction: onSlashCommand,
