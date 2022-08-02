@@ -75,10 +75,10 @@ func initSpotifyClient(retry bool) {
 				time.Sleep(time.Minute * 1)
 				initSpotifyClient(true)
 			}()
+			return
 		} else {
 			log.Fatal("failed to obtain spotify auth token: ", err)
 		}
-		return
 	}
 	httpClient := spotifyauth.New().Client(ctx, spotifyToken)
 	spotifyClient = *spotify.New(httpClient)
