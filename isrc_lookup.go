@@ -52,7 +52,7 @@ func main() {
 		log.Fatalf("error while connecting to the gateway: %s", err)
 	}
 
-	initSpotifyClient()
+	initSpotifyClient(false)
 
 	log.Infof("isrc lookup bot is now running.")
 	s := make(chan os.Signal, 1)
@@ -60,7 +60,7 @@ func main() {
 	<-s
 }
 
-func initSpotifyClient() {
+func initSpotifyClient(retry bool) {
 	spotifyConfig := &clientcredentials.Config{
 		ClientID:     os.Getenv("isrcLookupClientId"),
 		ClientSecret: os.Getenv("isrcLookupClientSecret"),
@@ -69,14 +69,23 @@ func initSpotifyClient() {
 	ctx := context.Background()
 	spotifyToken, err := spotifyConfig.Token(ctx)
 	if err != nil {
-		log.Fatal("failed to obtain spotify auth token: ", err)
+		if retry {
+			log.Error("failed to obtain spotify auth token: ", err)
+			go func() {
+				time.Sleep(time.Minute * 1)
+				initSpotifyClient(true)
+			}()
+		} else {
+			log.Fatal("failed to obtain spotify auth token: ", err)
+		}
+		return
 	}
 	httpClient := spotifyauth.New().Client(ctx, spotifyToken)
 	spotifyClient = *spotify.New(httpClient)
 	log.Info("spotify client initialized.")
 	go func() { // troll face
 		time.Sleep(time.Minute * 40)
-		initSpotifyClient()
+		initSpotifyClient(true)
 	}()
 }
 
