@@ -22,7 +22,9 @@ import (
 )
 
 var (
-	token                 = os.Getenv("isrcLookupToken")
+	token                 = os.Getenv("ISRC_LOOKUP_TOKEN")
+	spotifyClientId       = os.Getenv("ISRC_LOOKUP_CLIENT_ID")
+	spotifyClientSecret   = os.Getenv("ISRC_LOOKUP_CLIENT_SECRET")
 	trackRegex            = regexp.MustCompile("open\\.spotify\\.com/track/(\\w+)")
 	youtubeSearchTemplate = "https://www.youtube.com/results?search_query=\"%s\""
 
@@ -62,8 +64,8 @@ func main() {
 
 func initSpotifyClient(retry bool) {
 	spotifyConfig := &clientcredentials.Config{
-		ClientID:     os.Getenv("isrcLookupClientId"),
-		ClientSecret: os.Getenv("isrcLookupClientSecret"),
+		ClientID:     spotifyClientId,
+		ClientSecret: spotifyClientSecret,
 		TokenURL:     spotifyauth.TokenURL,
 	}
 	ctx := context.Background()
