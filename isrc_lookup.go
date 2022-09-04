@@ -3,6 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"regexp"
+	"strings"
+	"syscall"
+	"time"
+
 	"github.com/disgoorg/disgo"
 	"github.com/disgoorg/disgo/bot"
 	"github.com/disgoorg/disgo/cache"
@@ -13,12 +20,6 @@ import (
 	"github.com/zmb3/spotify/v2"
 	spotifyauth "github.com/zmb3/spotify/v2/auth"
 	"golang.org/x/oauth2/clientcredentials"
-	"os"
-	"os/signal"
-	"regexp"
-	"strings"
-	"syscall"
-	"time"
 )
 
 var (
@@ -37,7 +38,8 @@ func main() {
 	log.Info("disgo version: ", disgo.Version)
 
 	client, err := disgo.New(token,
-		bot.WithGatewayConfigOpts(gateway.WithIntents(gateway.IntentsNone)),
+		bot.WithGatewayConfigOpts(gateway.WithIntents(gateway.IntentsNone),
+			gateway.WithPresence(gateway.NewListeningPresence("Spotify", discord.OnlineStatusOnline, false))),
 		bot.WithCacheConfigOpts(cache.WithCacheFlags(cache.FlagsNone)),
 		bot.WithEventListeners(&events.ListenerAdapter{
 			OnApplicationCommandInteraction: onSlashCommand,
