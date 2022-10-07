@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/disgoorg/disgo v0.13.18
 	github.com/disgoorg/log v1.2.0
-	github.com/zmb3/spotify/v2 v2.2.1
+	github.com/zmb3/spotify/v2 v2.3.0
 	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5
 )
 
