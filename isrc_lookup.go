@@ -39,7 +39,7 @@ func main() {
 
 	client, err := disgo.New(token,
 		bot.WithGatewayConfigOpts(gateway.WithIntents(gateway.IntentsNone),
-			gateway.WithPresence(gateway.NewListeningPresence("Spotify", discord.OnlineStatusOnline, false))),
+			gateway.WithPresenceOpts(gateway.WithListeningActivity("Spotify"))),
 		bot.WithCacheConfigOpts(cache.WithCacheFlags(cache.FlagsNone)),
 		bot.WithEventListeners(&events.ListenerAdapter{
 			OnApplicationCommandInteraction: onSlashCommand,
