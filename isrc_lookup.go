@@ -40,7 +40,7 @@ func main() {
 	client, err := disgo.New(token,
 		bot.WithGatewayConfigOpts(gateway.WithIntents(gateway.IntentsNone),
 			gateway.WithPresenceOpts(gateway.WithListeningActivity("Spotify"))),
-		bot.WithCacheConfigOpts(cache.WithCacheFlags(cache.FlagsNone)),
+		bot.WithCacheConfigOpts(cache.WithCaches(cache.FlagsNone)),
 		bot.WithEventListeners(&events.ListenerAdapter{
 			OnApplicationCommandInteraction: onSlashCommand,
 		}),
