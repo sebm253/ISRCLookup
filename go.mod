@@ -3,7 +3,7 @@ module isrc_lookup
 go 1.19
 
 require (
-	github.com/disgoorg/disgo v0.15.2
+	github.com/disgoorg/disgo v0.15.3
 	github.com/disgoorg/log v1.2.0
 	github.com/zmb3/spotify/v2 v2.3.1
 	golang.org/x/oauth2 v0.6.0
