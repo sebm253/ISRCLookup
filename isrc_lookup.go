@@ -51,14 +51,13 @@ func main() {
 
 	defer client.Close(context.TODO())
 
-	err = client.OpenGateway(context.TODO())
-	if err != nil {
-		log.Fatalf("error while connecting to the gateway: %s", err)
+	if err := client.OpenGateway(context.TODO()); err != nil {
+		log.Fatal("error while connecting to the gateway: ", err)
 	}
 
 	initSpotifyClient(false)
 
-	log.Infof("isrc lookup bot is now running.")
+	log.Info("isrc lookup bot is now running.")
 	s := make(chan os.Signal, 1)
 	signal.Notify(s, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-s
