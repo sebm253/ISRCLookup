@@ -1,4 +1,4 @@
-module isrc_lookup
+module isrc-lookup
 
 go 1.20
 
