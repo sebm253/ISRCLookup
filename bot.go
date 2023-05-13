@@ -18,7 +18,7 @@ import (
 	"github.com/disgoorg/disgo/gateway"
 	"github.com/disgoorg/log"
 	"github.com/zmb3/spotify/v2"
-	spotifyauth "github.com/zmb3/spotify/v2/auth"
+	"github.com/zmb3/spotify/v2/auth"
 	"golang.org/x/oauth2/clientcredentials"
 )
 
