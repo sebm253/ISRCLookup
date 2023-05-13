@@ -24,7 +24,7 @@ import (
 
 var (
 	token                 = os.Getenv("ISRC_LOOKUP_TOKEN")
-	spotifyClientId       = os.Getenv("ISRC_LOOKUP_CLIENT_ID")
+	spotifyClientID       = os.Getenv("ISRC_LOOKUP_CLIENT_ID")
 	spotifyClientSecret   = os.Getenv("ISRC_LOOKUP_CLIENT_SECRET")
 	trackRegex            = regexp.MustCompile(`open\.spotify\.com/track/(\w+)`)
 	youtubeSearchTemplate = `https://www.youtube.com/results?search_query="%s"`
@@ -65,7 +65,7 @@ func main() {
 
 func initSpotifyClient(retry bool) {
 	spotifyConfig := &clientcredentials.Config{
-		ClientID:     spotifyClientId,
+		ClientID:     spotifyClientID,
 		ClientSecret: spotifyClientSecret,
 		TokenURL:     spotifyauth.TokenURL,
 	}
@@ -129,10 +129,10 @@ type ISRCResponse struct {
 	Name    string
 }
 
-func lookupISRC(trackId string) (*ISRCResponse, error) {
-	track, err := spotifyClient.GetTrack(context.Background(), spotify.ID(trackId))
+func lookupISRC(trackID string) (*ISRCResponse, error) {
+	track, err := spotifyClient.GetTrack(context.Background(), spotify.ID(trackID))
 	if err != nil {
-		log.Errorf("there was an error while looking up track %s: ", trackId, err)
+		log.Errorf("there was an error while looking up track %s: ", trackID, err)
 		return nil, err
 	}
 	isrc, ok := track.ExternalIDs["isrc"]
