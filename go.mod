@@ -3,14 +3,14 @@ module isrc-lookup
 go 1.20
 
 require (
-	github.com/disgoorg/disgo v0.16.4
+	github.com/disgoorg/disgo v0.16.5
 	github.com/disgoorg/log v1.2.0
 	github.com/zmb3/spotify/v2 v2.3.1
 	golang.org/x/oauth2 v0.8.0
 )
 
 require (
-	github.com/disgoorg/json v1.0.0 // indirect
+	github.com/disgoorg/json v1.1.0 // indirect
 	github.com/disgoorg/snowflake/v2 v2.0.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
