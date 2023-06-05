@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/zmb3/spotify/v2"
+	spotifyauth "github.com/zmb3/spotify/v2/auth"
 	"os"
 	"os/signal"
 	"regexp"
@@ -17,8 +19,6 @@ import (
 	"github.com/disgoorg/disgo/events"
 	"github.com/disgoorg/disgo/gateway"
 	"github.com/disgoorg/log"
-	"github.com/zmb3/spotify/v2"
-	"github.com/zmb3/spotify/v2/auth"
 	"golang.org/x/oauth2/clientcredentials"
 )
 
@@ -28,6 +28,7 @@ var (
 	spotifyClientSecret   = os.Getenv("ISRC_LOOKUP_CLIENT_SECRET")
 	trackRegex            = regexp.MustCompile(`open\.spotify\.com/track/(\w+)`)
 	youtubeSearchTemplate = `https://www.youtube.com/results?search_query="%s"`
+	spotifyActivityID     = "spotify:1"
 
 	spotifyClient spotify.Client
 )
@@ -38,11 +39,11 @@ func main() {
 	log.Info("disgo version: ", disgo.Version)
 
 	client, err := disgo.New(token,
-		bot.WithGatewayConfigOpts(gateway.WithIntents(gateway.IntentsNone),
+		bot.WithGatewayConfigOpts(gateway.WithIntents(gateway.IntentGuildPresences, gateway.IntentGuilds),
 			gateway.WithPresenceOpts(gateway.WithListeningActivity("Spotify"))),
-		bot.WithCacheConfigOpts(cache.WithCaches(cache.FlagsNone)),
+		bot.WithCacheConfigOpts(cache.WithCaches(cache.FlagPresences)),
 		bot.WithEventListeners(&events.ListenerAdapter{
-			OnApplicationCommandInteraction: onSlashCommand,
+			OnApplicationCommandInteraction: onCommand,
 		}),
 	)
 	if err != nil {
@@ -92,41 +93,55 @@ func initSpotifyClient(retry bool) {
 	}()
 }
 
-func onSlashCommand(event *events.ApplicationCommandInteractionCreate) {
-	data := event.SlashCommandInteractionData()
-	messageBuilder := discord.NewMessageCreateBuilder()
-	match := trackRegex.FindStringSubmatch(data.String("url"))
-	if match == nil {
-		_ = event.CreateMessage(messageBuilder.
-			SetContent("Invalid track url.").
-			SetEphemeral(true).
-			Build())
-	} else {
-		isrcResponse, err := lookupISRC(match[1])
-		if err != nil {
-			_ = event.CreateMessage(messageBuilder.
-				SetContentf("there was an error while looking up the track ISRC: %s", err).
-				SetEphemeral(true).
-				Build())
+func onCommand(event *events.ApplicationCommandInteractionCreate) {
+	data := event.Data
+	switch data := data.(type) {
+	case discord.SlashCommandInteractionData:
+		match := trackRegex.FindString(data.String("url"))
+		if match == "" {
+			createMessage("Invalid track URL.", event)
+		} else {
+			sendISRCDetails(match, event)
+		}
+	case discord.UserCommandInteractionData:
+		caches := event.Client().Caches()
+		presence, ok := caches.Presence(*event.GuildID(), data.TargetID())
+		if !ok {
+			createMessage("The user has no presence.", event)
 			return
 		}
-		var artists []string
-		for _, artist := range isrcResponse.Artists {
-			artists = append(artists, "**"+artist.Name+"**")
+		for _, activity := range presence.Activities {
+			if activity.ID != spotifyActivityID {
+				continue
+			}
+			trackID := activity.SyncID
+			if trackID == nil {
+				createMessage("The user is listening to a local track.", event)
+				return
+			}
+			sendISRCDetails(*trackID, event)
 		}
-		joined := strings.Join(artists, ", ")
-		_ = event.CreateMessage(messageBuilder.
-			SetContentf("ISRC for track **%s** by %s is **%s**.", isrcResponse.Name, joined, isrcResponse.ISRC).
-			SetEphemeral(true).
-			AddActionRow(discord.NewLinkButton("🔎 Lookup on YouTube", fmt.Sprintf(youtubeSearchTemplate, isrcResponse.ISRC))).
-			Build())
+		createMessage("The user isn't listening to Spotify.", event)
 	}
 }
 
-type ISRCResponse struct {
-	ISRC    string
-	Artists []spotify.SimpleArtist
-	Name    string
+func sendISRCDetails(trackID string, event *events.ApplicationCommandInteractionCreate) {
+	isrcResponse, err := lookupISRC(trackID)
+	messageBuilder := discord.NewMessageCreateBuilder()
+	if err != nil {
+		createMessage(fmt.Sprintf("There was an error while looking up the track ISRC: %s", err), event)
+		return
+	}
+	var artists []string
+	for _, artist := range isrcResponse.Artists {
+		artists = append(artists, "**"+artist.Name+"**")
+	}
+	joined := strings.Join(artists, ", ")
+	_ = event.CreateMessage(messageBuilder.
+		SetContentf("ISRC for track **%s** by %s is **%s**.", isrcResponse.Name, joined, isrcResponse.ISRC).
+		SetEphemeral(true).
+		AddActionRow(discord.NewLinkButton("🔎 Lookup on YouTube", fmt.Sprintf(youtubeSearchTemplate, isrcResponse.ISRC))).
+		Build())
 }
 
 func lookupISRC(trackID string) (*ISRCResponse, error) {
@@ -144,4 +159,17 @@ func lookupISRC(trackID string) (*ISRCResponse, error) {
 		Artists: track.Artists,
 		Name:    track.Name,
 	}, nil
+}
+
+func createMessage(content string, event *events.ApplicationCommandInteractionCreate) {
+	_ = event.CreateMessage(discord.NewMessageCreateBuilder().
+		SetContent(content).
+		SetEphemeral(true).
+		Build())
+}
+
+type ISRCResponse struct {
+	ISRC    string
+	Artists []spotify.SimpleArtist
+	Name    string
 }

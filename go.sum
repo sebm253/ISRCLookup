@@ -41,8 +41,8 @@ github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDk
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
-github.com/disgoorg/disgo v0.16.5 h1:6f2k9OwiDvLL/xq9mxevBVEpL0oSKYxM7aZ+v8mnt5w=
-github.com/disgoorg/disgo v0.16.5/go.mod h1:wo61ZLPn6bxHVdUODjyZ3fZTnCT7giD3uknsDUwMGn8=
+github.com/disgoorg/disgo v0.16.6-0.20230525144721-3defaebde6da h1:rhaOHuHECeetnObyfrQD/jyBzdtPIgGSygraVTu4P9Q=
+github.com/disgoorg/disgo v0.16.6-0.20230525144721-3defaebde6da/go.mod h1:wo61ZLPn6bxHVdUODjyZ3fZTnCT7giD3uknsDUwMGn8=
 github.com/disgoorg/json v1.1.0 h1:7xigHvomlVA9PQw9bMGO02PHGJJPqvX5AnwlYg/Tnys=
 github.com/disgoorg/json v1.1.0/go.mod h1:BHDwdde0rpQFDVsRLKhma6Y7fTbQKub/zdGO5O9NqqA=
 github.com/disgoorg/log v1.2.0 h1:sqlXnu/ZKAlIlHV9IO+dbMto7/hCQ474vlIdMWk8QKo=
