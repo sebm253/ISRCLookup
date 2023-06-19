@@ -99,11 +99,11 @@ func onCommand(event *events.ApplicationCommandInteractionCreate) {
 	data := event.Data
 	switch data := data.(type) {
 	case discord.SlashCommandInteractionData:
-		match := trackRegex.FindString(data.String("url"))
-		if match == "" {
+		match := trackRegex.FindStringSubmatch(data.String("url"))
+		if match == nil {
 			createMessage("Invalid track URL.", event)
 		} else {
-			sendISRCDetails(match, event)
+			sendISRCDetails(match[1], event)
 		}
 	case discord.UserCommandInteractionData:
 		caches := event.Client().Caches()
