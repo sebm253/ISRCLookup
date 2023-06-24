@@ -103,7 +103,7 @@ func onCommand(event *events.ApplicationCommandInteractionCreate) {
 		if match == nil {
 			createMessage("Invalid track URL.", event)
 		} else {
-			sendISRCDetails(match[1], event)
+			sendISRCDetails(match[2], event)
 		}
 	case discord.UserCommandInteractionData:
 		caches := event.Client().Caches()
