@@ -26,7 +26,7 @@ var (
 	token                 = os.Getenv("ISRC_LOOKUP_TOKEN")
 	spotifyClientID       = os.Getenv("ISRC_LOOKUP_CLIENT_ID")
 	spotifyClientSecret   = os.Getenv("ISRC_LOOKUP_CLIENT_SECRET")
-	trackRegex            = regexp.MustCompile(`open\.spotify\.com/track/(\w+)`)
+	trackRegex            = regexp.MustCompile(`open\.spotify\.com/(intl-[a-z]{2}/)?track/(\w+)`)
 	youtubeSearchTemplate = `https://www.youtube.com/results?search_query="%s"`
 	spotifyActivityID     = "spotify:1"
 
