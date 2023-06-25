@@ -18,6 +18,7 @@ import (
 	"regexp"
 	"strings"
 	"syscall"
+	"time"
 )
 
 const (
@@ -26,13 +27,15 @@ const (
 )
 
 var (
-	trackRegex = regexp.MustCompile(`open\.spotify\.com/(intl-[a-z]{2}/)?track/(\w+)`)
+	spotifyClientID     = os.Getenv("ISRC_LOOKUP_CLIENT_ID")
+	spotifyClientSecret = os.Getenv("ISRC_LOOKUP_CLIENT_SECRET")
+	trackRegex          = regexp.MustCompile(`open\.spotify\.com/(intl-[a-z]{2}/)?track/(\w+)`)
 
 	spotifyClient spotify.Client
 )
 
 func main() {
-	initSpotifyClient()
+	initSpotifyClient(false)
 
 	log.SetLevel(log.LevelInfo)
 	log.Info("starting the bot...")
@@ -62,20 +65,33 @@ func main() {
 	<-s
 }
 
-func initSpotifyClient() {
+func initSpotifyClient(retry bool) {
 	spotifyConfig := &clientcredentials.Config{
-		ClientID:     os.Getenv("ISRC_LOOKUP_CLIENT_ID"),
-		ClientSecret: os.Getenv("ISRC_LOOKUP_CLIENT_SECRET"),
+		ClientID:     spotifyClientID,
+		ClientSecret: spotifyClientSecret,
 		TokenURL:     spotifyauth.TokenURL,
 	}
 	ctx := context.Background()
 	spotifyToken, err := spotifyConfig.Token(ctx)
 	if err != nil {
-		log.Fatal(err)
+		if retry {
+			log.Error("failed to obtain spotify auth token: ", err)
+			time.AfterFunc(time.Minute*1, func() {
+				initSpotifyClient(true)
+			})
+			return
+		} else {
+			log.Fatal("failed to obtain spotify auth token: ", err)
+		}
 	}
 	httpClient := spotifyauth.New().Client(ctx, spotifyToken)
 	spotifyClient = *spotify.New(httpClient)
-	log.Info("spotify client initialized.")
+	if !retry {
+		log.Info("spotify client initialized.")
+	}
+	time.AfterFunc(time.Minute*40, func() {
+		initSpotifyClient(true)
+	})
 }
 
 func onCommand(event *events.ApplicationCommandInteractionCreate) {
