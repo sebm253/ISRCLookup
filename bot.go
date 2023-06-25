@@ -3,15 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/zmb3/spotify/v2"
-	spotifyauth "github.com/zmb3/spotify/v2/auth"
-	"os"
-	"os/signal"
-	"regexp"
-	"strings"
-	"syscall"
-	"time"
-
 	"github.com/disgoorg/disgo"
 	"github.com/disgoorg/disgo/bot"
 	"github.com/disgoorg/disgo/cache"
@@ -19,26 +10,35 @@ import (
 	"github.com/disgoorg/disgo/events"
 	"github.com/disgoorg/disgo/gateway"
 	"github.com/disgoorg/log"
+	"github.com/zmb3/spotify/v2"
+	spotifyauth "github.com/zmb3/spotify/v2/auth"
 	"golang.org/x/oauth2/clientcredentials"
+	"os"
+	"os/signal"
+	"regexp"
+	"strings"
+	"syscall"
+)
+
+const (
+	youtubeSearchTemplate = `https://www.youtube.com/results?search_query="%s"`
+	spotifyActivityID     = "spotify:1"
 )
 
 var (
-	token                 = os.Getenv("ISRC_LOOKUP_TOKEN")
-	spotifyClientID       = os.Getenv("ISRC_LOOKUP_CLIENT_ID")
-	spotifyClientSecret   = os.Getenv("ISRC_LOOKUP_CLIENT_SECRET")
-	trackRegex            = regexp.MustCompile(`open\.spotify\.com/(intl-[a-z]{2}/)?track/(\w+)`)
-	youtubeSearchTemplate = `https://www.youtube.com/results?search_query="%s"`
-	spotifyActivityID     = "spotify:1"
+	trackRegex = regexp.MustCompile(`open\.spotify\.com/(intl-[a-z]{2}/)?track/(\w+)`)
 
 	spotifyClient spotify.Client
 )
 
 func main() {
+	initSpotifyClient()
+
 	log.SetLevel(log.LevelInfo)
 	log.Info("starting the bot...")
 	log.Info("disgo version: ", disgo.Version)
 
-	client, err := disgo.New(token,
+	client, err := disgo.New(os.Getenv("ISRC_LOOKUP_TOKEN"),
 		bot.WithGatewayConfigOpts(gateway.WithIntents(gateway.IntentGuildPresences, gateway.IntentGuilds),
 			gateway.WithPresenceOpts(gateway.WithListeningActivity("Spotify"))),
 		bot.WithCacheConfigOpts(cache.WithCaches(cache.FlagPresences)),
@@ -56,43 +56,26 @@ func main() {
 		log.Fatal("error while connecting to the gateway: ", err)
 	}
 
-	initSpotifyClient(false)
-
 	log.Info("isrc lookup bot is now running.")
 	s := make(chan os.Signal, 1)
 	signal.Notify(s, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-s
 }
 
-func initSpotifyClient(retry bool) {
+func initSpotifyClient() {
 	spotifyConfig := &clientcredentials.Config{
-		ClientID:     spotifyClientID,
-		ClientSecret: spotifyClientSecret,
+		ClientID:     os.Getenv("ISRC_LOOKUP_CLIENT_ID"),
+		ClientSecret: os.Getenv("ISRC_LOOKUP_CLIENT_SECRET"),
 		TokenURL:     spotifyauth.TokenURL,
 	}
 	ctx := context.Background()
 	spotifyToken, err := spotifyConfig.Token(ctx)
 	if err != nil {
-		if retry {
-			log.Error("failed to obtain spotify auth token: ", err)
-			go func() {
-				time.Sleep(time.Minute * 1)
-				initSpotifyClient(true)
-			}()
-			return
-		} else {
-			log.Fatal("failed to obtain spotify auth token: ", err)
-		}
+		log.Fatal(err)
 	}
 	httpClient := spotifyauth.New().Client(ctx, spotifyToken)
 	spotifyClient = *spotify.New(httpClient)
-	if !retry {
-		log.Info("spotify client initialized.")
-	}
-	go func() { // troll face
-		time.Sleep(time.Minute * 40)
-		initSpotifyClient(true)
-	}()
+	log.Info("spotify client initialized.")
 }
 
 func onCommand(event *events.ApplicationCommandInteractionCreate) {
