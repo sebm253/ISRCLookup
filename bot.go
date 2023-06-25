@@ -128,39 +128,21 @@ func onCommand(event *events.ApplicationCommandInteractionCreate) {
 }
 
 func sendISRCDetails(trackID string, event *events.ApplicationCommandInteractionCreate) {
-	isrcResponse, err := lookupISRC(trackID)
-	messageBuilder := discord.NewMessageCreateBuilder()
+	track, err := spotifyClient.GetTrack(context.Background(), spotify.ID(trackID))
 	if err != nil {
-		createMessage(fmt.Sprintf("There was an error while looking up the track ISRC: %s", err), event)
+		createMessage(fmt.Sprintf("there was an error while looking up track %s: %s", trackID, err), event)
 		return
 	}
 	var artists []string
-	for _, artist := range isrcResponse.Artists {
+	for _, artist := range track.Artists {
 		artists = append(artists, "**"+artist.Name+"**")
 	}
-	joined := strings.Join(artists, ", ")
-	_ = event.CreateMessage(messageBuilder.
-		SetContentf("ISRC for track **%s** by %s is **%s**.", isrcResponse.Name, joined, isrcResponse.ISRC).
+	isrc := track.ExternalIDs["isrc"]
+	_ = event.CreateMessage(discord.NewMessageCreateBuilder().
+		SetContentf("ISRC for track **%s** by %s is **%s**.", track.Name, strings.Join(artists, ", "), isrc).
 		SetEphemeral(true).
-		AddActionRow(discord.NewLinkButton("🔎 Lookup on YouTube", fmt.Sprintf(youtubeSearchTemplate, isrcResponse.ISRC))).
+		AddActionRow(discord.NewLinkButton("🔎 Lookup on YouTube", fmt.Sprintf(youtubeSearchTemplate, isrc))).
 		Build())
-}
-
-func lookupISRC(trackID string) (*ISRCResponse, error) {
-	track, err := spotifyClient.GetTrack(context.Background(), spotify.ID(trackID))
-	if err != nil {
-		log.Errorf("there was an error while looking up track %s: ", trackID, err)
-		return nil, err
-	}
-	isrc, ok := track.ExternalIDs["isrc"]
-	if !ok {
-		return nil, err
-	}
-	return &ISRCResponse{
-		ISRC:    isrc,
-		Artists: track.Artists,
-		Name:    track.Name,
-	}, nil
 }
 
 func createMessage(content string, event *events.ApplicationCommandInteractionCreate) {
@@ -168,10 +150,4 @@ func createMessage(content string, event *events.ApplicationCommandInteractionCr
 		SetContent(content).
 		SetEphemeral(true).
 		Build())
-}
-
-type ISRCResponse struct {
-	ISRC    string
-	Artists []spotify.SimpleArtist
-	Name    string
 }
