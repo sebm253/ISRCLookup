@@ -1,9 +1,9 @@
 module isrc-lookup
 
-go 1.20
+go 1.21
 
 require (
-	github.com/disgoorg/disgo v0.16.8
+	github.com/disgoorg/disgo v0.16.9
 	github.com/disgoorg/log v1.2.1
 	github.com/zmb3/spotify/v2 v2.3.1
 	golang.org/x/oauth2 v0.11.0
@@ -16,7 +16,7 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/sasha-s/go-csync v0.0.0-20210812194225-61421b77c44b // indirect
 	golang.org/x/crypto v0.12.0 // indirect
-	golang.org/x/exp v0.0.0-20220325121720-054d8573a5d8 // indirect
+	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63 // indirect
 	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
