@@ -112,15 +112,15 @@ func onCommand(event *events.ApplicationCommandInteractionCreate) {
 			return
 		}
 		for _, activity := range presence.Activities {
-			if activity.ID != spotifyActivityID {
-				continue
-			}
-			trackID := activity.SyncID
-			if trackID == nil {
-				createMessage("The user is listening to a local track.", event)
+			if activity.ID == spotifyActivityID {
+				trackID := activity.SyncID
+				if trackID == nil {
+					createMessage("The user is listening to a local track.", event)
+					return
+				}
+				sendISRCDetails(*trackID, event)
 				return
 			}
-			sendISRCDetails(*trackID, event)
 		}
 		createMessage("The user isn't listening to Spotify.", event)
 	}
@@ -137,16 +137,22 @@ func sendISRCDetails(trackID string, event *events.ApplicationCommandInteraction
 		artists = append(artists, "**"+artist.Name+"**")
 	}
 	isrc := track.ExternalIDs["isrc"]
-	_ = event.CreateMessage(discord.NewMessageCreateBuilder().
+	err = event.CreateMessage(discord.NewMessageCreateBuilder().
 		SetContentf("ISRC for track **%s** by %s is **%s**.", track.Name, strings.Join(artists, ", "), isrc).
 		SetEphemeral(true).
 		AddActionRow(discord.NewLinkButton("🔎 Lookup on YouTube", fmt.Sprintf(youtubeSearchTemplate, isrc))).
 		Build())
+	if err != nil {
+		log.Error("there was an error while responding with the ISRC: ", err)
+	}
 }
 
 func createMessage(content string, event *events.ApplicationCommandInteractionCreate) {
-	_ = event.CreateMessage(discord.NewMessageCreateBuilder().
+	err := event.CreateMessage(discord.NewMessageCreateBuilder().
 		SetContent(content).
 		SetEphemeral(true).
 		Build())
+	if err != nil {
+		log.Error("there was an error while creating a message: ", err)
+	}
 }
