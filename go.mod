@@ -3,8 +3,8 @@ module isrc-lookup
 go 1.21
 
 require (
-	github.com/disgoorg/disgo v0.17.2
-	github.com/disgoorg/log v1.2.1
+	github.com/disgoorg/disgo v0.17.3-0.20240315213847-d21773cd5f03
+	github.com/lmittmann/tint v1.0.4
 	github.com/zmb3/spotify/v2 v2.4.1
 	golang.org/x/oauth2 v0.18.0
 )
