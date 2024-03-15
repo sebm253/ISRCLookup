@@ -1,6 +1,6 @@
 module isrc-lookup
 
-go 1.21
+go 1.22
 
 require (
 	github.com/disgoorg/disgo v0.17.3-0.20240315213847-d21773cd5f03
