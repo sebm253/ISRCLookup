@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"isrc-lookup"
+	"isrc-lookup/internal"
 
 	"github.com/disgoorg/disgo/handler"
 )
 
-func NewHandler(bot *main.Bot) *Handler {
+func NewHandler(bot *internal.Bot) *Handler {
 	h := &Handler{
 		Bot:    bot,
 		Router: handler.New(),
@@ -17,6 +17,6 @@ func NewHandler(bot *main.Bot) *Handler {
 }
 
 type Handler struct {
-	Bot *main.Bot
+	Bot *internal.Bot
 	handler.Router
 }
