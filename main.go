@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"isrc-lookup/handlers"
-	"isrc-lookup/internal"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -17,7 +16,7 @@ import (
 )
 
 func main() {
-	b := &internal.Bot{}
+	b := &Bot{}
 	if err := b.InitSpotifyClient(); err != nil {
 		panic(err)
 	}
