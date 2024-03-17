@@ -25,7 +25,7 @@ type Bot struct {
 	*spotify.Client
 }
 
-func (b *Bot) InitSpotifyClient(retry bool) {
+func (b *Bot) InitSpotifyClient() error {
 	spotifyConfig := &clientcredentials.Config{
 		ClientID:     spotifyClientID,
 		ClientSecret: spotifyClientSecret,
@@ -33,23 +33,18 @@ func (b *Bot) InitSpotifyClient(retry bool) {
 	}
 	spotifyToken, err := spotifyConfig.Token(context.Background())
 	if err != nil {
-		if !retry {
-			panic(err)
-		}
 		slog.Error("failed to obtain spotify auth token", tint.Err(err))
 
 		time.AfterFunc(time.Minute*1, func() {
-			b.InitSpotifyClient(true)
+			b.InitSpotifyClient()
 		})
-		return
+		return err
 	}
 	httpClient := spotifyauth.New().Client(context.Background(), spotifyToken)
 	b.Client = spotify.New(httpClient)
 
-	if !retry {
-		slog.Info("spotify client initialized")
-	}
 	time.AfterFunc(spotifyRefreshDelay, func() {
-		b.InitSpotifyClient(true)
+		b.InitSpotifyClient()
 	})
+	return nil
 }

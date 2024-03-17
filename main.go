@@ -18,7 +18,10 @@ import (
 
 func main() {
 	b := &internal.Bot{}
-	b.InitSpotifyClient(false)
+	if err := b.InitSpotifyClient(); err != nil {
+		panic(err)
+	}
+	slog.Info("spotify client initialized")
 
 	h := handlers.NewHandler(b)
 
