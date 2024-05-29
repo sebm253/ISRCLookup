@@ -35,7 +35,7 @@ func (h *Handler) HandleISRCSlash(data discord.SlashCommandInteractionData, even
 }
 
 func (h *Handler) HandleISRCContext(data discord.UserCommandInteractionData, event *handler.CommandEvent) error {
-	messageBuilder := discord.NewMessageCreateBuilder().SetEphemeral(true)
+	messageBuilder := discord.NewMessageCreateBuilder().SetAllowedMentions(&discord.AllowedMentions{}).SetEphemeral(true)
 
 	caches := event.Client().Caches()
 	presence, ok := caches.Presence(*event.GuildID(), data.TargetID())
