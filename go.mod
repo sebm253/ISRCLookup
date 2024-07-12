@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	github.com/disgoorg/disgo v0.18.8
-	github.com/lmittmann/tint v1.0.4
+	github.com/lmittmann/tint v1.0.5
 	github.com/zmb3/spotify/v2 v2.4.2
 	golang.org/x/oauth2 v0.21.0
 )
