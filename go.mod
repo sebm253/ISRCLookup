@@ -6,7 +6,7 @@ require (
 	github.com/disgoorg/disgo v0.18.16
 	github.com/lmittmann/tint v1.1.3
 	github.com/zmb3/spotify/v2 v2.4.3
-	golang.org/x/oauth2 v0.34.0
+	golang.org/x/oauth2 v0.35.0
 )
 
 require (
